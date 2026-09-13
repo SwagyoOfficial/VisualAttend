@@ -60,10 +60,14 @@ def take_attendance() :
 
                             all_detected_id.setdefault(student_id, []).append(f"Photo {idx+1}")
 
-                enrolled_res = supabase.table("subject_students").select("*, students(*)").eq("subject_id", selected_subject_id).execute()
-                enrolled_students = enrolled_res.data
+                try:
+                    enrolled_res = supabase.table("subject_students").select("*, students(*)").eq("subject_id", selected_subject_id).execute()
+                    enrolled_students = enrolled_res.data if enrolled_res else []
+                except Exception as e:
+                    st.error(f"Error fetching enrolled students: {e}")
+                    enrolled_students = []
 
-                if not enrolled_students :
+                if not enrolled_students:
                     st.warning("No students enrolled in this course")
                 else :
                     results, attendance_to_log = [], []

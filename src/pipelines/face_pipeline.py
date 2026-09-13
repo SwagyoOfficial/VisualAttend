@@ -31,40 +31,52 @@ def get_face_embedding(img_np) :
     return encoding
 
 @st.cache_resource
-def get_trained_model() :
+def get_trained_model():
     X = []
     y = []
-    student_db = get_all_students()
+    try:
+        student_db = get_all_students()
+    except Exception:
+        student_db = None
 
-    if not student_db :
+    if not student_db:
         return None
-    for student in student_db :
-        embedding = student.get('face_embedding')
-        if embedding :
-            X.append(np.array(embedding))
-            y.append(student.get('student_id'))
-    if len(X) == 0 :
+    for student in student_db:
+        if isinstance(student, dict):
+            embedding = student.get('face_embedding')
+            if embedding:
+                X.append(np.array(embedding))
+                y.append(student.get('student_id'))
+    if len(X) == 0:
         return None
     clf = SVC(kernel='linear', probability=True, class_weight='balanced')
 
-    try :
+    try:
         clf.fit(X, y)
-    except ValueError :
+    except ValueError:
         pass
 
-    return {'clf' : clf, 'X' : X, 'y' : y}
+    return {'clf': clf, 'X': X, 'y': y}
 
-def train_classifier() :
+def train_classifier():
     st.cache_resource.clear()
     model_data = get_trained_model()
     return bool(model_data)
 
-def predict_attendance(class_image_np) :
-    encodings = get_face_embedding(class_image_np)
+def predict_attendance(class_image_np):
+    try:
+        encodings = get_face_embedding(class_image_np)
+    except Exception as e:
+        st.error(f"Face processing error: {e}")
+        return {}, [], 0
 
     detected_student = {}
-    model_data = get_trained_model()
-    if not model_data :
+    try:
+        model_data = get_trained_model()
+    except Exception:
+        model_data = None
+
+    if not model_data:
         return detected_student, [], len(encodings)
 
     clf = model_data['clf']
@@ -73,10 +85,10 @@ def predict_attendance(class_image_np) :
 
     all_students = sorted(list(set(y_train)))
 
-    for encoding in encodings :
-        if len(all_students) > 1 :
+    for encoding in encodings:
+        if len(all_students) > 1:
             predicted_id = int(clf.predict([encoding])[0])
-        else :
+        else:
             predicted_id = int(all_students[0]) 
 
         student_embedding = X_train[y_train.index(predicted_id)]
@@ -84,6 +96,6 @@ def predict_attendance(class_image_np) :
         best_match_score = np.linalg.norm(student_embedding - encoding)
         resemblance_threshold = 0.6
 
-        if best_match_score <= resemblance_threshold :
+        if best_match_score <= resemblance_threshold:
             detected_student[predicted_id] = True
-    return detected_student, all_students, len(encodings)
+    return detected_student, all_students, len(encodings)

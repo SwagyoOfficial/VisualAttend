@@ -53,8 +53,8 @@ def student_screen():
             else:
                 if detected:
                     student_id = list(detected.keys())[0]
-                    all_students = get_all_students()
-                    student = next((s for s in all_students if s['student_id'] == student_id), None)
+                    all_students = get_all_students() or []
+                    student = next((s for s in all_students if isinstance(s, dict) and s.get('student_id') == student_id), None)
                     if student:
                         st.session_state.is_logged_in = True
                         st.session_state.user_role = 'student'
@@ -62,6 +62,10 @@ def student_screen():
                         time.sleep(1)
                         st.toast(f"Welcome back, {student['name']}!")
                         st.rerun()
+                    else:
+                        st.info("Face recognized but student record could not be loaded. Please try again.")
+                        show_registration = True
+
                 else:
                     st.info("Face not recognized. New student? Register below.")
                     show_registration = True
