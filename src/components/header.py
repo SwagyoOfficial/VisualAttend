@@ -10,7 +10,7 @@ def header_home():
                 <span class="material-symbols-outlined" style="color:var(--blue-600); font-size:28px;">school</span>
             </div>
             <h1 style="margin:0; color:var(--blue-900); font-size:2.1rem; font-weight:800; letter-spacing:-0.02em;">
-                VisualAttend
+                Swagyo
             </h1>
             <p style="color:var(--gray-600); font-size:0.95rem; margin:0.3rem 0 0;">
                 AI-powered attendance system for modern classrooms
@@ -29,7 +29,7 @@ def navbar(hide_actions: bool = False):
         <div class="va-navbar">
             <div class="va-navbar-brand">
                 <span class="material-symbols-outlined" style="color:var(--blue-600); font-size:24px;">school</span>
-                <span>VisualAttend</span>
+                <span>Swagyo</span>
             </div>
         </div>
         """,
