@@ -4,9 +4,9 @@ def footer():
     st.markdown(
         """
         <div class="va-footer">
-            <p>VisualAttend &nbsp;·&nbsp; AI-Powered Attendance System</p>
+            <p>Swagyo &nbsp;·&nbsp; AI-Powered Attendance System</p>
             <p style="margin-top:0.3rem;">
-                Contact: <a href="mailto:preethamacharya16@gmail.com">preethamacharya16@gmail.com</a>
+                Contact: <a href="mailto:contact@swagyo.com">contact@swagyo.com</a>
             </p>
         </div>
         """,
